@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>职业匹配测试 · V4（AI顾问 + 本地兜底）</title>
+  <meta name="description" content="18道题职业匹配；雷达图；AI顾问（OpenAI，可本地兜底）；对话次数限制与升级；一键部署到 Netlify/Vercel。">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="site-header">
+  <div class="container">
+    <h1>职业匹配测试 · V4</h1>
+    <p class="tagline">18题 · 雷达图 · AI顾问（真实大模型 + 本地兜底） · 升级解锁</p>
+  </div>
+</header>
+
+<main class="container">
+  <section id="screen-intro" class="card">
+    <h2>开始前</h2>
+    <p>为每题打1–5分（1=完全不符合，5=非常符合）。完成后将生成五维雷达图、职业推荐，并可与AI职业顾问对话。（默认城市用于一键职位搜索）</p>
+    <div class="row">
+      <label>默认城市</label>
+      <input id="city" value="Calgary, AB">
+    </div>
+    <button id="startBtn">开始测试</button>
+    <span id="llmBadge" class="badge">AI连接检测中…</span>
+  </section>
+
+  <section id="screen-quiz" class="card hidden">
+    <div class="quiz-head">
+      <h2>问题 <span id="qIndex">1</span> / <span id="qTotal">18</span></h2>
+      <div class="progress"><div id="progressBar"></div></div>
+    </div>
+    <p id="qText" class="qtext"></p>
+    <div class="options">
+      <button class="opt" data-score="1">1</button>
+      <button class="opt" data-score="2">2</button>
+      <button class="opt" data-score="3">3</button>
+      <button class="opt" data-score="4">4</button>
+      <button class="opt" data-score="5">5</button>
+    </div>
+    <div class="actions">
+      <button id="prevBtn" class="secondary">上一题</button>
+      <button id="nextBtn">下一题</button>
+    </div>
+  </section>
+
+  <section id="screen-result" class="card hidden">
+    <h2>测评结果</h2>
+    <div class="grid2">
+      <div><div id="radar" class="radar"></div></div>
+      <div id="scoreBars" class="bars"></div>
+    </div>
+    <div id="summary" class="summary"></div>
+
+    <div class="actions">
+      <button id="retryBtn" class="secondary">重新测试</button>
+      <button id="printBtn">打印/保存PDF</button>
+    </div>
+
+    <div id="jobBlock" class="card sub">
+      <h3>岗位一键搜索</h3>
+      <div id="jobButtons" class="jobbtns"></div>
+      <div class="small">提示：点击将打开 Indeed/LinkedIn 搜索页面（使用你的默认城市）。</div>
+    </div>
+
+    <details class="card sub">
+      <summary>五维度解释（S/R/I/A/C）</summary>
+      <ul>
+        <li><b>社交/销售 (S)</b>：喜欢交流、影响他人、服务支持。</li>
+        <li><b>现实/动手 (R)</b>：偏好实操、工具设备、现场环境。</li>
+        <li><b>调研/分析 (I)</b>：热衷数据、逻辑推理、探究原因。</li>
+        <li><b>艺术/创意 (A)</b>：侧重表达、设计、内容创作。</li>
+        <li><b>常规/流程 (C)</b>：重视秩序、规范、效率与稳定。</li>
+      </ul>
+    </details>
+  </section>
+</main>
+
+<!-- AI 职业顾问（真实模型 + 本地兜底） -->
+<div id="aiWidget" class="ai-widget">
+  <button id="aiToggle" class="ai-toggle">AI职业顾问</button>
+  <div id="aiPanel" class="ai-panel hidden">
+    <div class="ai-header">
+      <div>
+        <strong>AI职业顾问</strong>
+        <div class="small">优先使用真实大模型；不可用时自动切换本地兜底</div>
+      </div>
+      <div class="small">剩余免费对话：<span id="turnsLeft">-</span></div>
+      <button id="aiClose" title="关闭">×</button>
+    </div>
+    <div id="aiMessages" class="ai-messages"></div>
+    <div class="ai-input">
+      <textarea id="aiInput" rows="2" placeholder="例：如何从零转行前端开发？需要学哪些技能？"></textarea>
+      <button id="aiSend">发送</button>
+    </div>
+    <div class="ai-foot small">提示：一般建议，不替代法律/移民/医疗等专业意见。</div>
+  </div>
+</div>
+
+<!-- 升级弹窗 -->
+<div id="upgradeModal" class="modal hidden">
+  <div class="modal-content card">
+    <h3>升级解锁无限对话</h3>
+    <p>你已用完本次免费对话额度。可以输入访问码或前往付款解锁。</p>
+    <label>访问码</label>
+    <input id="accessCode" placeholder="如有，请输入">
+    <div class="actions">
+      <button id="useCodeBtn">使用访问码</button>
+      <a id="payLink" class="btn" target="_blank" rel="noopener" href="/api/checkout">前往付款</a>
+      <button id="closeUpgradeBtn" class="secondary">稍后再说</button>
+    </div>
+    <div id="upgradeMsg" class="small"></div>
+  </div>
+</div>
+
+<footer class="site-footer">
+  <div class="container small">
+    <p>© 职业匹配测试 · V4 原型（AI+兜底）。</p>
+  </div>
+</footer>
+
+<script src="app.js"></script>
+</body>
+</html>
